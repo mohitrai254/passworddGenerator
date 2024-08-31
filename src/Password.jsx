@@ -25,8 +25,13 @@ function Password() {
     generatePassword();
   }, [length, numbers, characters]);
 
+  const handleCopy = () => {
+    inputRef.current.select();
+    navigator.clipboard.writeText(inputRef.current.value);
+  };
+
   return (
-    <div>
+    <div className="h-screen w-screen justify-center items-center bg-green-100 flex flex-col">
       <div className="text-3xl font-sans bg-[#49B6FF] rounded w-1/2 h-20">
         <h1 className="text-center text-[#FF5E5B]">Password Generator</h1>
       </div>
@@ -34,8 +39,14 @@ function Password() {
         <div className="flex flex-col">
           <div>
             <label>Generate Password</label>
-            <input className="border-2" type="text" value={password} />
-            <button ref={inputRef}>Copy</button>
+            <input
+              className="border-2"
+              type="text"
+              value={password}
+              ref={inputRef}
+              readOnly
+            />
+            <button onClick={handleCopy}>Copy</button>
           </div>
 
           <div>
