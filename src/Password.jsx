@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 function Password() {
   const [password, setPassword] = useState("");
   const [length, setLength] = useState(8);
-  const [numbers, setNumbers] = useState(false);
-  const [characters, setCharacters] = useState(false);
+  const [isNumber, setIsNumber] = useState(false);
+  const [isCharacter, setIsCharacter] = useState(false);
 
   const inputRef = useRef();
 
@@ -12,18 +12,36 @@ function Password() {
     const generatePassword = () => {
       let str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
       let pass = "";
+      let numbers = "0123456789";
+      let characters = "!@#$%^&*()";
 
-      if (numbers) str = str + "0123456789";
-      if (characters) str = str + "!@#$%^&*()";
+      if (isNumber) str = str + "0123456789";
+      if (isCharacter) str = str + "!@#$%^&*()";
 
-      for (let i = 0; i < length; i++) {
-        const index = Math.floor(Math.random() * (str.length + 1));
+      //Ensure at least one number and one special character is required
+      if (isNumber)
+        pass += numbers.charAt(Math.floor(Math.random() * numbers.length));
+      if (isCharacter)
+        pass += characters.charAt(
+          Math.floor(Math.random() * characters.length)
+        );
+
+      //Fill the rest of the password
+      for (let i = pass.length; i < length; i++) {
+        let index = Math.floor(Math.random() * str.length);
         pass = pass + str.charAt(index);
       }
+
+      //Shuffle the password to avoid predictable patterns
+      pass = pass
+        .split("")
+        .sort(() => 0.5 - Math.random())
+        .join("");
+
       setPassword(pass);
     };
     generatePassword();
-  }, [length, numbers, characters]);
+  }, [length, isNumber, isCharacter]);
 
   const handleCopy = () => {
     inputRef.current.select();
@@ -72,14 +90,14 @@ function Password() {
               Numbers:{" "}
               <input
                 type="checkbox"
-                onChange={(e) => setNumbers(e.target.checked)}
+                onChange={(e) => setIsNumber(e.target.checked)}
               ></input>
             </label>
             <label>
               Characters:{" "}
               <input
                 type="checkbox"
-                onChange={(e) => setCharacters(e.target.checked)}
+                onChange={(e) => setIsCharacter(e.target.checked)}
               ></input>
             </label>
           </div>
